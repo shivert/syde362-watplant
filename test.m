@@ -1,9 +1,13 @@
-num_emitter = 3;
-d1=1;
-d2=13;
-d3=18; % these must be 0-20
-d4=0
-% get rid of repeats
+
+num_emitter = 4;
+num_boundary = num_emitter*2;
+
+d1=3;
+d2=4;
+d3=5; % these must be 0-20
+d4=0;
+
+%% get rid of repeats
 if d1 == d2
     d1=0;
 end
@@ -23,43 +27,36 @@ if d3 == d4
     d3=0;
 end
 
-num_boundary = num_emitter*2;
-
-
-%% 
+%% [Done] Modify DIMENSIO.IN
+%% Must change NumBPD to be num_boundary
 
 dimension_file_id = fopen(dimensionIN);
-dimension_skip_line = 3;
-NumBoundary_dimention_index=4;
+newDimensionContent = modifyDimension(dimension_file_id, num_boundary);
+fclose(dimension_file_id);
 
-newDimensionContent = writeInput(dimension_file_id, dimension_skip_line, NumBoundary_dimention_index, num_boundary);
-fclose(dimension_file_id);
 dimension_file_id = fopen(dimensionIN, 'wt');
-fprintf(dimension_file_id, '%s\n', newDimensionContent);
+fprintf(dimension_file_id, '%s', newDimensionContent);
 fclose(dimension_file_id);
-%% 
+
+%% [Done] Modify BOUNDARY.IN
+%% Must change NumBPD to be num_boundary
 
 boundary_file_id = fopen(boundaryIN);
-boundary_skip_line = 4;
-NumBoundary_boundary_index=2;
-newBoundaryContent = writeInput(boundary_file_id, boundary_skip_line, NumBoundary_boundary_index, num_boundary);
+newBoundaryContent = modifyBoundary(boundary_file_id, num_boundary);
 fclose(boundary_file_id);
+
 boundary_file_id = fopen(boundaryIN, 'wt');
-fprintf(boundary_file_id, '%s\n', newBoundaryContent);
+fprintf(boundary_file_id, '%s', newBoundaryContent);
 fclose(boundary_file_id);
 
 
+%% Modify DOMAIN.DAT
+%% This is where all the magic happens!
 
-% domain_file_id = fopen(domainDAT);
-% domain_file = strsplit(fscanf(domain_file_id, '%c'), '\n');
-% 
-% domainSplit =strsplit(domain_file, ' ');
-% RowSplit{char_index} = num2str(new_value);
-% newRow=strjoin(RowSplit,' ');
-% file{skip_line} = newRow;
-% str= strjoin(file, '\n');
+domain_file_id = fopen(domainDAT);
+newDomainContent = modifyDomain(domain_file_id, d1, d2, d3, d4);
+fclose(domain_file_id);
 
-
-
-
-
+domain_file_id = fopen(domainDAT, 'wt');
+fprintf(domain_file_id, '%s', newDomainContent);
+fclose(domain_file_id);
