@@ -1,9 +1,9 @@
-num_emitter = 4;
 
-d1=2;
-d2=9;
-d3=19; % these must be 0-20
-d4=0;
+flow_rate = 1;
+d1=1;
+d2=7;
+d3=20; % these must be 0-20
+d4=13;
 
 %% get rid of repeats
 if d1 == d2
@@ -23,6 +23,20 @@ if d2 == d4
 end
 if d3 == d4
     d3=0;
+end
+
+num_emitter = 4;
+if d1 == 0
+    num_emitter = num_emitter -1;
+end
+if d2 == 0
+    num_emitter = num_emitter -1;
+end
+if d3 == 0
+    num_emitter = num_emitter -1;
+end
+if d4 == 0
+    num_emitter = num_emitter -1;
 end
 
 nodes_on = getNodes(d1, d2, d3, d4); % find the notes to be turned on
@@ -54,9 +68,18 @@ fclose(boundary_file_id);
 %% This is where all the magic happens!
 
 domain_file_id = fopen(domainDAT);
-newDomainContent = modifyDomain(domain_file_id, nodes_on);
+newDomainContent = modifyDomain(domain_file_id, nodes_on, flow_rate);
 fclose(domain_file_id);
 
 domain_file_id = fopen(domainDAT, 'wt');
 fprintf(domain_file_id, '%s', newDomainContent);
 fclose(domain_file_id);
+%% Run hydrus
+dos(dos_command);
+%% get watercontent for the root zone nodes
+nodeIndex = getRootZoneNodes(meshPath, numNodes, rootZone);
+[time, waterContent] = processOutput(outputPath, numNodes);
+relevantWaterContent = waterContent(nodeIndex); % get water content of the nodes of interest
+totalRootZoneWater = avgNodeArea *trapz(relevantWaterContent);
+totalWaterInput = flow_rate *time *num_emitter;
+efficiency = totalRootZoneWater/totalWaterInput;

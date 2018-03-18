@@ -1,9 +1,9 @@
-function new_row = modifyDomainRow(row, row_on)
+function new_row = modifyDomainRow(row, row_on, q)
     RowSplit = string(strsplit(strtrim(row), ' '));
     
     if row_on
         RowSplit{2} = num2str(-1);
-        RowSplit{4} = num2str(0.75);
+        RowSplit{4} = num2str(q/2);
     else
         RowSplit{2} = num2str(0);
         RowSplit{4} = num2str(0);

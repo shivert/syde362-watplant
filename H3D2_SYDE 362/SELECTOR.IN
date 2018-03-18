@@ -15,7 +15,7 @@ lWat lChem lSink Short Inter lScrn AtmIn lTemp lWTDep lEquil lExtGen lInv
 lUnsatCh lCFSTr   lHP2   m_lActRSU lDummy  lDummy  lDummy
  f       f       f       f       f       f       f
  PrintStep  PrintInterval lEnter
-         1              0       t
+         1              0       f
 *** BLOCK B: MATERIAL INFORMATION **************************************
 NMat    NLay    hTab1   hTabN     NAniz
   1       1    0.0001   10000

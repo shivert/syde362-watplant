@@ -1,4 +1,4 @@
-function str = modifyDomain(domain_file_id, nodes_on)
+function str = modifyDomain(domain_file_id, nodes_on,q)
     file = strsplit(fscanf(domain_file_id, '%c'), '\n');
     file_offset_header = 6;
     
@@ -6,12 +6,12 @@ function str = modifyDomain(domain_file_id, nodes_on)
     
     % Turn all rows off
     for elm = mesh_node_lookup
-        file{elm + file_offset_header} = modifyDomainRow(file{elm + file_offset_header}, false);
+        file{elm + file_offset_header} = modifyDomainRow(file{elm + file_offset_header}, false,0);
     end
 
     % Turn on appropriate rows
     for elm = nodes_on
-        file{elm + file_offset_header} = modifyDomainRow(file{elm + file_offset_header}, true);
+        file{elm + file_offset_header} = modifyDomainRow(file{elm + file_offset_header}, true, q);
     end
     
     str= strjoin(file, '\n');
