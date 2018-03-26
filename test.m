@@ -1,8 +1,8 @@
 
 flow_rate = 1;
-d1=1;
+d1=0;
 d2=7;
-d3=20; % these must be 0-20
+d3=0; % these must be 0-20
 d4=13;
 
 %% get rid of repeats
@@ -79,6 +79,7 @@ dos(dos_command);
 %% get watercontent for the root zone nodes
 nodeIndex = getRootZoneNodes(meshPath, numNodes, rootZone);
 [time, waterContent] = processOutput(outputPath, numNodes);
+adjustedWater=waterContent-0.1502;
 relevantWaterContent = waterContent(nodeIndex); % get water content of the nodes of interest
 totalRootZoneWater = avgNodeArea *trapz(relevantWaterContent);
 totalWaterInput = flow_rate *time *num_emitter;

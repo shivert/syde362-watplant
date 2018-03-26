@@ -1,4 +1,4 @@
-function fitness= fitnessfunc(parameter_vec)
+function [content, time]= watercontentfunc(parameter_vec)
 run("setup.m");
 try
     flow_rate = parameter_vec(1);
@@ -86,29 +86,27 @@ try
     dos(dos_command);
     %% get watercontent for the root zone nodes
     nodeIndex = getRootZoneNodes(meshPath, numNodes, rootZone);
-    [time, waterContent] = processOutput(outputPath, numNodes);
-    if time <20
-        fitness=100;
+    [t, waterContent] = processOutput(outputPath, numNodes);
+    if t <20
+        warning("calculation stopped before 20 seconds")
+        warning(t)
+        time=t;
+        content=0;
     else
         adjustedWater=waterContent-0.1502;
         relevantWaterContent = adjustedWater(nodeIndex); % get water content of the nodes of interest
         satWater=ones(378,1)*(0.43-0.1502);
         totalsatwater = avgNodeArea *trapz(satWater);
         totalRootZoneWater = avgNodeArea *trapz(relevantWaterContent);
-        totalWaterInput = flow_rate *time *num_emitter;
-        efficiency = totalRootZoneWater/totalWaterInput;
-        if efficiency >1
-            fitness = 100;
-        elseif totalRootZoneWater<(0.9*totalsatwater)
-            fitness = 100;
-        else
-            fitness = 1.0-efficiency;
-        end
+        totalWaterInput = flow_rate *t *num_emitter;
+        content = totalRootZoneWater;
+        time=t;
     end 
     
 catch
     warning("something failed, discarding this try")
-    fitness=100;
+    content=0;
+    time=0;
 end
 
 
